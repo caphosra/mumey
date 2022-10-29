@@ -1,8 +1,10 @@
 FROM ubuntu:20.04 AS base
 
 ARG USER_NAME=dev
+
 ARG LLVM_VERSION=14.0.6
 ARG LLVM_NUM_VERSION=140
+ARG LLVM_BUILD_CONFIG=RelWithDebInfo
 ARG LLVM_INSTALLATION_DIR=/home/dev/llvm
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -46,15 +48,20 @@ RUN \
     # Install LLVM
     #
     ########################################################
+    mkdir $LLVM_INSTALLATION_DIR; \
     cd $HOME; \
     wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VERSION/$LLVM_DIRECTORY.tar.xz; \
     tar xJf $LLVM_DIRECTORY.tar.xz; \
     mkdir $HOME/$LLVM_DIRECTORY/llvm/build; \
     cd $HOME/$LLVM_DIRECTORY/llvm/build; \
-    mkdir $LLVM_INSTALLATION_DIR; \
-    cmake .. -G Ninja -DCMAKE_INSTALL_PREFIX=$LLVM_INSTALLATION_DIR; \
-    cmake --build .; \
-    cmake --build . --target install; \
+    cmake .. \
+        -DCMAKE_INSTALL_PREFIX=$LLVM_INSTALLATION_DIR \
+        -DCMAKE_BUILD_TYPE=$LLVM_BUILD_CONFIG \
+        -DLLVM_INCLUDE_EXAMPLES=OFF \
+        -DLLVM_INCLUDE_TESTS=OFF \
+        -G Ninja; \
+    ninja; \
+    ninja install; \
     rm -rf $HOME/$LLVM_DIRECTORY; \
     echo 'export LLVM_SYS_${LLVM_NUM_VERSION}_PREFIX=$LLVM_INSTALLATION_DIR' >> $HOME/.bashrc; \
     ########################################################
@@ -62,7 +69,7 @@ RUN \
     # Install Rust
     #
     ########################################################
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh; \
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y; \
     ########################################################
     #
     # Clean waste
