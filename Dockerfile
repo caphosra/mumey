@@ -2,9 +2,13 @@ FROM ubuntu:20.04 AS base
 
 ARG USER_NAME=dev
 
+#
+# Configurations for LLVM.
+# It is preferable to set LLVM_BUILD_CONFIG RelWithDebInfo.
+#
 ARG LLVM_VERSION=14.0.6
-ARG LLVM_NUM_VERSION=140
-ARG LLVM_BUILD_CONFIG=RelWithDebInfo
+ARG LLVM_BUILD_CONFIG=Release
+ARG LLVM_ENV=LLVM_SYS_140_PREFIX
 ARG LLVM_INSTALLATION_DIR=/home/dev/llvm
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -63,7 +67,7 @@ RUN \
     ninja; \
     ninja install; \
     rm -rf $HOME/$LLVM_DIRECTORY; \
-    echo 'export LLVM_SYS_${LLVM_NUM_VERSION}_PREFIX=$LLVM_INSTALLATION_DIR' >> $HOME/.bashrc; \
+    echo 'export $LLVM_ENV=$LLVM_INSTALLATION_DIR' >> $HOME/.bashrc; \
     ########################################################
     #
     # Install Rust
