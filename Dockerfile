@@ -67,7 +67,7 @@ RUN \
         -DLLVM_INCLUDE_TESTS=OFF \
         -G Ninja; \
     cmake --build .; \
-    cmake --build . . --target install; \
+    cmake --build . --target install; \
     ########################################################
     #
     # Clean waste
