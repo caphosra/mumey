@@ -8,8 +8,8 @@ ARG USER_NAME=dev
 #
 ARG LLVM_VERSION=14.0.6
 ARG LLVM_BUILD_CONFIG=Release
-ARG LLVM_ENV=LLVM_SYS_140_PREFIX
 ARG LLVM_INSTALLATION_DIR=/home/dev/llvm
+ENV LLVM_SYS_140_PREFIX=$LLVM_INSTALLATION_DIR
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=xterm-256color
@@ -68,7 +68,6 @@ RUN \
         -G Ninja; \
     cmake --build .; \
     cmake --build . . --target install; \
-    echo 'export $LLVM_ENV=$LLVM_INSTALLATION_DIR' >> $HOME/.bashrc; \
     ########################################################
     #
     # Clean waste
@@ -95,6 +94,7 @@ RUN \
     sudo apt clean; \
     sudo rm -rf /var/lib/apt/lists/*;
 
+ENV PATH=$PATH:$LLVM_INSTALLATION_DIR
 ENV DEBIAN_FRONTEND=newt
 
 SHELL ["bash", "-l"]
