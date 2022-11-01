@@ -94,7 +94,7 @@ RUN \
     sudo apt clean; \
     sudo rm -rf /var/lib/apt/lists/*;
 
-ENV PATH=$PATH:$LLVM_INSTALLATION_DIR
+ENV PATH=$PATH:$LLVM_INSTALLATION_DIR/bin
 ENV DEBIAN_FRONTEND=newt
 
 SHELL ["bash", "-l"]
