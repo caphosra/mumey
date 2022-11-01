@@ -54,6 +54,7 @@ RUN \
     #
     ########################################################
     mkdir $LLVM_INSTALLATION_DIR; \
+    mkdir $HOME/tmp; \
     cd $HOME/tmp; \
     wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VERSION/$LLVM_DIRECTORY.tar.xz; \
     tar xJf $LLVM_DIRECTORY.tar.xz; \
