@@ -25,6 +25,7 @@ RUN \
     apt install -y \
         build-essential \
         cmake \
+        curl \
         git \
         ninja-build \
         python3 \
@@ -41,7 +42,7 @@ RUN \
 
 USER $USER_NAME
 
-FROM base AS ship
+FROM base AS llvm
 
 ENV LLVM_DIRECTORY=llvm-project-$LLVM_VERSION.src
 
@@ -53,21 +54,32 @@ RUN \
     #
     ########################################################
     mkdir $LLVM_INSTALLATION_DIR; \
-    cd $HOME; \
+    cd $HOME/tmp; \
     wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VERSION/$LLVM_DIRECTORY.tar.xz; \
     tar xJf $LLVM_DIRECTORY.tar.xz; \
-    mkdir $HOME/$LLVM_DIRECTORY/llvm/build; \
-    cd $HOME/$LLVM_DIRECTORY/llvm/build; \
+    mkdir $LLVM_DIRECTORY/llvm/build; \
+    cd $LLVM_DIRECTORY/llvm/build; \
     cmake .. \
         -DCMAKE_INSTALL_PREFIX=$LLVM_INSTALLATION_DIR \
         -DCMAKE_BUILD_TYPE=$LLVM_BUILD_CONFIG \
         -DLLVM_INCLUDE_EXAMPLES=OFF \
         -DLLVM_INCLUDE_TESTS=OFF \
         -G Ninja; \
-    ninja; \
-    ninja install; \
-    rm -rf $HOME/$LLVM_DIRECTORY; \
+    cmake --build .; \
+    cmake --build . . --target install; \
     echo 'export $LLVM_ENV=$LLVM_INSTALLATION_DIR' >> $HOME/.bashrc; \
+    ########################################################
+    #
+    # Clean waste
+    #
+    ########################################################
+    cd $HOME; \
+    rm -rf $HOME/tmp;
+
+FROM llvm AS ship
+
+RUN \
+    set -eux; \
     ########################################################
     #
     # Install Rust
