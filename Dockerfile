@@ -27,6 +27,7 @@ RUN \
         cmake \
         curl \
         git \
+        libffi-dev \
         ninja-build \
         python3 \
         sudo \
