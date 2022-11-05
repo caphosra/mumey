@@ -13,7 +13,7 @@ jobs:
     name: Check format
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/caphosra/${{ github.repository }}-dev:main
+      image: ghcr.io/${{ github.repository }}-dev:main
 
     steps:
       - name: Checkout
@@ -26,7 +26,7 @@ jobs:
     name: Test all
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/caphosra/${{ github.repository }}-dev:main
+      image: ghcr.io/${{ github.repository }}-dev:main
 
     steps:
       - name: Checkout
