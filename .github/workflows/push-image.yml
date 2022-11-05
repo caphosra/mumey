@@ -25,7 +25,7 @@ jobs:
         uses: tj-actions/changed-files@v34
         with:
           files: |
-            .github/workflows/dev-image.yml
+            .github/workflows/push-image.yml
             docker/dev.Dockerfile
 
       - name: Log in to the Container registry
