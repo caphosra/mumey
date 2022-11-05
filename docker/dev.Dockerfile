@@ -8,11 +8,13 @@ ARG USER_NAME=dev
 #
 ARG LLVM_VERSION=14.0.6
 ARG LLVM_BUILD_CONFIG=Release
-ARG LLVM_INSTALLATION_DIR=/home/dev/llvm
+ARG LLVM_INSTALLATION_DIR=/llvm
 ENV LLVM_SYS_140_PREFIX=$LLVM_INSTALLATION_DIR
+ENV LLVM_DIRECTORY=llvm-project-$LLVM_VERSION.src
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=xterm-256color
+ENV PATH=$PATH:$LLVM_INSTALLATION_DIR/bin
 
 RUN \
     set -eux; \
@@ -34,30 +36,14 @@ RUN \
         wget; \
     ########################################################
     #
-    # Add a user
-    #
-    ########################################################
-    adduser --disabled-password --gecos '' $USER_NAME; \
-    adduser $USER_NAME sudo; \
-    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers;
-
-USER $USER_NAME
-
-FROM base AS llvm
-
-ENV LLVM_DIRECTORY=llvm-project-$LLVM_VERSION.src
-
-RUN \
-    set -eux; \
-    ########################################################
-    #
     # Install LLVM
     #
     ########################################################
     mkdir $LLVM_INSTALLATION_DIR; \
-    mkdir $HOME/tmp; \
-    cd $HOME/tmp; \
-    wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VERSION/$LLVM_DIRECTORY.tar.xz; \
+    mkdir /tmp/llvm; \
+    cd /tmp/llvm; \
+    wget \
+        https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VERSION/$LLVM_DIRECTORY.tar.xz; \
     tar xJf $LLVM_DIRECTORY.tar.xz; \
     mkdir $LLVM_DIRECTORY/llvm/build; \
     cd $LLVM_DIRECTORY/llvm/build; \
@@ -74,10 +60,22 @@ RUN \
     # Clean waste
     #
     ########################################################
-    cd $HOME; \
-    rm -rf $HOME/tmp;
+    cd /; \
+    rm -rf /tmp/llvm; \
+    ########################################################
+    #
+    # Add a user
+    #
+    ########################################################
+    adduser --disabled-password --gecos '' $USER_NAME; \
+    adduser $USER_NAME sudo; \
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers;
 
-FROM llvm AS ship
+FROM base as non-root
+
+USER $USER_NAME
+
+FROM non-root AS with-rust
 
 RUN \
     set -eux; \
@@ -95,7 +93,6 @@ RUN \
     sudo apt clean; \
     sudo rm -rf /var/lib/apt/lists/*;
 
-ENV PATH=$PATH:$LLVM_INSTALLATION_DIR/bin
 ENV DEBIAN_FRONTEND=newt
 
 SHELL ["bash", "-l"]
