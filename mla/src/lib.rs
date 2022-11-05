@@ -228,53 +228,53 @@ mod test {
     #[test]
     fn token_builder_2() {
         let mut token_builder =
-            TokenBuilder::new("something.file".to_string(), "addone := map ([x] add x 1)");
+            TokenBuilder::new("something.file".to_string(), "inc := map\n\t([x] add x 1)");
 
         assert_eq!(
             token_builder.get_token_stream(),
             Ok(vec![
                 Token::new(
                     FilePosition::new("something.file".to_string(), 0, 0),
-                    TokenType::Ident("addone".to_string())
+                    TokenType::Ident("inc".to_string())
                 ),
                 Token::new(
-                    FilePosition::new("something.file".to_string(), 0, 7),
+                    FilePosition::new("something.file".to_string(), 0, 4),
                     TokenType::Assign
                 ),
                 Token::new(
-                    FilePosition::new("something.file".to_string(), 0, 10),
+                    FilePosition::new("something.file".to_string(), 0, 7),
                     TokenType::Ident("map".to_string())
                 ),
                 Token::new(
-                    FilePosition::new("something.file".to_string(), 0, 14),
+                    FilePosition::new("something.file".to_string(), 1, 1),
                     TokenType::LeftParen
                 ),
                 Token::new(
-                    FilePosition::new("something.file".to_string(), 0, 15),
+                    FilePosition::new("something.file".to_string(), 1, 2),
                     TokenType::LeftBracket
                 ),
                 Token::new(
-                    FilePosition::new("something.file".to_string(), 0, 16),
+                    FilePosition::new("something.file".to_string(), 1, 3),
                     TokenType::Ident("x".to_string())
                 ),
                 Token::new(
-                    FilePosition::new("something.file".to_string(), 0, 17),
+                    FilePosition::new("something.file".to_string(), 1, 4),
                     TokenType::RightBracket
                 ),
                 Token::new(
-                    FilePosition::new("something.file".to_string(), 0, 19),
+                    FilePosition::new("something.file".to_string(), 1, 6),
                     TokenType::Ident("add".to_string())
                 ),
                 Token::new(
-                    FilePosition::new("something.file".to_string(), 0, 23),
+                    FilePosition::new("something.file".to_string(), 1, 10),
                     TokenType::Ident("x".to_string())
                 ),
                 Token::new(
-                    FilePosition::new("something.file".to_string(), 0, 25),
+                    FilePosition::new("something.file".to_string(), 1, 12),
                     TokenType::NaturalNumber(1)
                 ),
                 Token::new(
-                    FilePosition::new("something.file".to_string(), 0, 26),
+                    FilePosition::new("something.file".to_string(), 1, 13),
                     TokenType::RightParen
                 ),
             ])
