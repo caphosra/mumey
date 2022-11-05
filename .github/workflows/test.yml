@@ -13,12 +13,18 @@ jobs:
     name: Check format
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/${{ github.repository }}-dev:main
+      image: ghcr.io/${{ github.repository }}-dev:base
       options: --user dev
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: stable
+            components: rustfmt
 
       - name: Check format
         run: |
@@ -27,12 +33,17 @@ jobs:
     name: Test all
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/${{ github.repository }}-dev:main
+      image: ghcr.io/${{ github.repository }}-dev:base
       options: --user dev
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: stable
 
       - name: Run test
         run: |
