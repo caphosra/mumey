@@ -7,6 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}-dev
 
 jobs:
   ghcr:
@@ -51,7 +52,7 @@ jobs:
           file: ./docker/dev.Dockerfile
           push: true
           target: base
-          tags: ${{ env.REGISTRY }}/mumey-dev:base
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:base
 
       - name: Build and push a non-root image
         uses: docker/build-push-action@v3
@@ -59,4 +60,4 @@ jobs:
         with:
           file: ./docker/dev.Dockerfile
           push: true
-          tags: ${{ env.REGISTRY }}/mumey-dev:main
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main
