@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 AS base
+FROM ubuntu:20.04 AS root
 
 ARG USER_NAME=dev
 
@@ -62,6 +62,13 @@ RUN \
     ########################################################
     cd /; \
     rm -rf /tmp/llvm; \
+    apt purge -y \
+        cmake \
+        ninja-build \
+        python3 \
+        wget; \
+    apt clean; \
+    rm -rf /var/lib/apt/lists/*; \
     ########################################################
     #
     # Add a user
@@ -71,11 +78,9 @@ RUN \
     adduser $USER_NAME sudo; \
     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers;
 
-FROM base as non-root
+FROM root
 
 USER $USER_NAME
-
-FROM non-root AS with-rust
 
 RUN \
     set -eux; \
@@ -84,14 +89,7 @@ RUN \
     # Install Rust
     #
     ########################################################
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y; \
-    ########################################################
-    #
-    # Clean waste
-    #
-    ########################################################
-    sudo apt clean; \
-    sudo rm -rf /var/lib/apt/lists/*;
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y;
 
 ENV DEBIAN_FRONTEND=newt
 

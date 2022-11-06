@@ -51,8 +51,8 @@ jobs:
         with:
           file: ./docker/dev.Dockerfile
           push: true
-          target: base
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:base
+          target: root
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:root
 
       - name: Build and push a non-root image
         uses: docker/build-push-action@v3
